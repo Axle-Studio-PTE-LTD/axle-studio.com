@@ -1,0 +1,129 @@
+---
+/**
+ * Hero illustration: the mark drawn as a technical blueprint. The guide
+ * lines, fillet circles and centre marks come straight from the geometry
+ * the mark was built from, so the drawing is literally its construction.
+ */
+import { CONSTRUCTION, MARK } from '../lib/brand';
+import MarkPaths from './MarkPaths.astro';
+
+interface Props {
+  id?: string;
+  class?: string;
+}
+
+const { id = 'bp', class: className } = Astro.props;
+
+const VB = { x: -84, y: -70, w: 510, h: 404 };
+const yTop = VB.y;
+const yBot = VB.y + VB.h;
+const xL = VB.x;
+const xR = VB.x + VB.w;
+
+const guides = CONSTRUCTION.lines.map(({ a, b }) => ({
+  x1: (a + b * yTop).toFixed(1),
+  x2: (a + b * yBot).toFixed(1),
+}));
+
+// Angle dimension at the outer foot of the left leg.
+const R = 46;
+const t = (MARK.leanDeg * Math.PI) / 180;
+const { x: fx, y: fy } = CONSTRUCTION.foot;
+const angleArc = `M${fx + R} ${fy}A${R} ${R} 0 0 0 ${(fx + R * Math.cos(t)).toFixed(1)} ${(fy - R * Math.sin(t)).toFixed(1)}`;
+const cross = 5;
+---
+
+<svg
+  class:list={['blueprint', className]}
+  viewBox={`${VB.x} ${VB.y} ${VB.w} ${VB.h}`}
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="The Axle Studios mark drawn as a technical blueprint, with its construction lines and radii."
+>
+  <g class="guides">
+    <g class="fx fx-1">
+      <g class="lines">
+        {guides.map((l) => <line x1={l.x1} y1={yTop} x2={l.x2} y2={yBot} />)}
+        {CONSTRUCTION.horizontals.map((y) => <line x1={xL} y1={y} x2={xR} y2={y} />)}
+      </g>
+    </g>
+    <g class="fx fx-2">
+      <g class="circles">
+        {CONSTRUCTION.fillets.map((f) => <circle cx={f.cx} cy={f.cy} r={f.r} />)}
+      </g>
+    </g>
+    <g class="fx fx-3">
+      <g class="marks">
+        {CONSTRUCTION.fillets.map((f) => <path d={`M${f.cx - cross} ${f.cy}h${cross * 2}M${f.cx} ${f.cy - cross}v${cross * 2}`} />)}
+        <path d={angleArc}></path>
+      </g>
+      <text class="label" x={fx + R + 9} y={fy - 5}>{MARK.leanDeg}°</text>
+    </g>
+  </g>
+  <g class="mark">
+    <MarkPaths id={id} sheen />
+  </g>
+</svg>
+
+<style>
+  .blueprint {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .guides {
+    fill: none;
+    stroke: var(--bp-line);
+    stroke-width: 1;
+  }
+  .guides line,
+  .guides circle,
+  .guides path {
+    vector-effect: non-scaling-stroke;
+  }
+  .lines {
+    stroke-dasharray: 3 6;
+    opacity: 0.75;
+  }
+  .circles {
+    stroke-dasharray: 2 5;
+    opacity: 0.6;
+  }
+  .label {
+    fill: var(--ink-3);
+    stroke: none;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .fx {
+      opacity: 0;
+      animation: fade-in 1s ease-out forwards;
+    }
+    .fx-2 { animation-delay: 0.35s; }
+    .fx-3 { animation-delay: 0.6s; }
+
+    .mark :global(.mark-left),
+    .mark :global(.mark-right) {
+      opacity: 0;
+      animation: assemble 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    .mark :global(.mark-left) {
+      --from: translate(40px, -62px);
+      animation-delay: 0.9s;
+    }
+    .mark :global(.mark-right) {
+      --from: translate(30px, 56px);
+      animation-delay: 1.15s;
+    }
+  }
+  @keyframes fade-in {
+    to { opacity: 1; }
+  }
+  @keyframes assemble {
+    from { opacity: 0; transform: var(--from); }
+    to { opacity: 1; transform: none; }
+  }
+</style>

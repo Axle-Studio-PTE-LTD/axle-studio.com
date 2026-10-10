@@ -1,0 +1,26 @@
+---
+/** The Axle mark on its own. Decorative unless a `title` is given. */
+import { MARK } from '../lib/brand';
+import MarkPaths from './MarkPaths.astro';
+
+interface Props {
+  id?: string;
+  class?: string;
+  title?: string;
+  sheen?: boolean;
+}
+
+const { id = 'mark', class: className, title, sheen = false } = Astro.props;
+---
+
+<svg
+  class:list={['mark', className]}
+  viewBox={`0 0 ${MARK.w} ${MARK.h}`}
+  xmlns="http://www.w3.org/2000/svg"
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+  focusable="false"
+>
+  <MarkPaths id={id} sheen={sheen} />
+</svg>

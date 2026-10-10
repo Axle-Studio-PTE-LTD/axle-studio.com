@@ -1,0 +1,73 @@
+---
+/**
+ * The two pieces of the Axle mark with their gradients. Renders SVG children
+ * only, so it can live inside any <svg> that uses mark units (342 × 264.3).
+ * Pass a unique `id` per instance so gradient ids never collide on a page.
+ */
+import { MARK } from '../lib/brand';
+
+interface Props {
+  id: string;
+  /** Adds a slow light sweep across the mark (motion-safe only). */
+  sheen?: boolean;
+}
+
+const { id, sheen = false } = Astro.props;
+---
+
+<defs>
+  <linearGradient id={`${id}-l`} gradientUnits="userSpaceOnUse" x1="178" y1="18" x2="58" y2="254">
+    <stop offset="0" class="mk-l0"></stop>
+    <stop offset="0.36" class="mk-l1"></stop>
+    <stop offset="0.74" class="mk-l2"></stop>
+    <stop offset="1" class="mk-l3"></stop>
+  </linearGradient>
+  <linearGradient id={`${id}-r`} gradientUnits="userSpaceOnUse" x1="236" y1="138" x2="334" y2="264">
+    <stop offset="0" class="mk-r0"></stop>
+    <stop offset="0.22" class="mk-r1"></stop>
+    <stop offset="0.5" class="mk-r2"></stop>
+    <stop offset="0.8" class="mk-r3"></stop>
+    <stop offset="1" class="mk-r4"></stop>
+  </linearGradient>
+  {
+    sheen && (
+      <>
+        <clipPath id={`${id}-clip`}>
+          <path d={MARK.left}></path>
+          <path d={MARK.right}></path>
+        </clipPath>
+        <linearGradient id={`${id}-sh`} x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#fff" stop-opacity="0"></stop>
+          <stop offset="0.5" class="mk-sheen"></stop>
+          <stop offset="1" stop-color="#fff" stop-opacity="0"></stop>
+        </linearGradient>
+      </>
+    )
+  }
+</defs>
+<path class="mark-left" d={MARK.left} fill={`url(#${id}-l)`}></path>
+<path class="mark-right" d={MARK.right} fill={`url(#${id}-r)`}></path>
+{
+  sheen && (
+    <g clip-path={`url(#${id}-clip)`}>
+      <g class="mark-sheen">
+        <rect x="-70" y="-90" width="80" height="460" fill={`url(#${id}-sh)`} transform="skewX(-33)"></rect>
+      </g>
+    </g>
+  )
+}
+
+<style>
+  .mark-sheen {
+    transform: translateX(-80px);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .mark-sheen {
+      animation: sheen 7s cubic-bezier(0.45, 0, 0.2, 1) 2.8s infinite;
+    }
+  }
+  @keyframes sheen {
+    0% { transform: translateX(-80px); }
+    42%, 100% { transform: translateX(620px); }
+  }
+</style>

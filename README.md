@@ -1,43 +1,33 @@
-# Astro Starter Kit: Minimal
+# Axle Studios — website
 
-```sh
-bun create astro@latest -- --template minimal
-```
+Single-page "under construction" site for Axle Studios Pte Ltd, built with [Astro](https://astro.build) as a fully static page.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## Commands
 
-## 🚀 Project Structure
+| Command        | Action                                        |
+| :------------- | :-------------------------------------------- |
+| `bun install`  | Install dependencies                          |
+| `bun dev`      | Start the dev server at `localhost:4321`      |
+| `bun build`    | Build the production site to `./dist/`        |
+| `bun preview`  | Preview the production build locally          |
 
-Inside of your Astro project, you'll see the following folders and files:
+## Where things live
 
-```text
-/
-├── public/
-├── src/
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+- `src/site.ts` — company details shown on the page (name, location, contact email). The contact button only appears once `email` is set.
+- `src/pages/index.astro` — the page content and copy.
+- `src/styles/global.css` — design tokens (light and dark via `light-dark()`), layout and typography.
+- `src/lib/brand.ts` — the brand geometry: logo mark paths, "AXLE" letterforms and lockup layout, all traced from `brand/brand.jpeg`.
+- `src/components/` — `Lockup` (mark + wordmark), `Mark`, `MarkPaths` (shared gradients), `Blueprint` (hero illustration) and `ThemeToggle`.
+- `public/` — favicons, Apple touch icon and the social preview image (`og.png`), all generated from the same mark geometry.
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+## Deployment
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site with Bun and publishes `dist/` to GitHub Pages (Settings → Pages → Source must be "GitHub Actions"). The workflow can also be run by hand from the Actions tab.
 
-Any static assets, like images, can be placed in the `public/` directory.
+The site is served on the custom domain `axle-studio.com`: `public/CNAME` holds the domain and `astro.config.mjs` sets `site` to `https://axle-studio.com`, which drives the canonical and social-image URLs. Links to files in `public/` go through `withBase()` from `src/lib/paths.ts`, so if the site ever has to live under a sub-path, setting `base` in the config is the only change needed.
 
-## 🧞 Commands
+## Notes
 
-All commands are run from the root of the project, from a terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- The page follows the visitor's system colour scheme; the toggle in the header pins a choice in `localStorage`.
+- Type is [Jost](https://fonts.google.com/specimen/Jost), loaded from Google Fonts, chosen to match the geometric secondary line of the lockup.
+- All motion is disabled automatically for visitors who prefer reduced motion.

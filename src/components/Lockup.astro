@@ -1,0 +1,56 @@
+---
+/**
+ * Mark + wordmark, laid out exactly as in brand/brand.jpeg.
+ * `full` adds the "STUDIOS PTE LTD" line; `compact` centres "AXLE" on the mark.
+ */
+import { LETTERS, LOCKUP, WORD } from '../lib/brand';
+import MarkPaths from './MarkPaths.astro';
+
+interface Props {
+  variant?: 'full' | 'compact';
+  id?: string;
+  class?: string;
+  title?: string;
+}
+
+const { variant = 'full', id = 'lockup', class: className, title } = Astro.props;
+const wordY = variant === 'full' ? LOCKUP.wordY : LOCKUP.wordYCompact;
+---
+
+<svg
+  class:list={['lockup', `lockup-${variant}`, className]}
+  viewBox={`0 0 ${LOCKUP.w} ${LOCKUP.h}`}
+  xmlns="http://www.w3.org/2000/svg"
+  role={title ? 'img' : undefined}
+  aria-label={title}
+  aria-hidden={title ? undefined : 'true'}
+  focusable="false"
+>
+  <MarkPaths id={id} />
+  <g transform={`translate(${LOCKUP.wordX} ${wordY})`} fill="currentColor">
+    <path d={LETTERS}></path>
+    {
+      variant === 'full' && (
+        <text
+          x={WORD.sub.x}
+          y={WORD.sub.y}
+          textLength={WORD.sub.length}
+          lengthAdjust="spacing"
+          font-size={WORD.sub.size}
+          font-weight="300"
+        >
+          {WORD.sub.text}
+        </text>
+      )
+    }
+  </g>
+</svg>
+
+<style>
+  .lockup {
+    overflow: visible;
+  }
+  text {
+    font-family: inherit;
+  }
+</style>

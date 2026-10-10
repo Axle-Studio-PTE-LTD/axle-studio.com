@@ -1,0 +1,347 @@
+/* Axle Studios — global styles
+   Monochrome system drawn from the brand lockup. Colours use light-dark();
+   the theme toggle only flips `color-scheme`, so one token set serves both. */
+
+:root {
+  color-scheme: light dark;
+
+  --font-sans: 'Jost', 'Futura', 'Avenir Next', 'Century Gothic', 'Helvetica Neue', Arial, sans-serif;
+  --gutter: clamp(1rem, 4vw, 3rem);
+
+  --bg: light-dark(#f4f4f2, #0a0a0a);
+  --ink: light-dark(#0c0c0c, #f0f0ee);
+  --ink-2: light-dark(#474747, #b3b3b0);
+  --ink-3: light-dark(#86868a, #78787c);
+  --line: light-dark(rgba(12, 12, 12, 0.16), rgba(255, 255, 255, 0.18));
+  --line-soft: light-dark(rgba(12, 12, 12, 0.08), rgba(255, 255, 255, 0.09));
+  --grid: light-dark(rgba(12, 12, 12, 0.065), rgba(255, 255, 255, 0.05));
+  --bp-line: light-dark(rgba(12, 12, 12, 0.5), rgba(255, 255, 255, 0.4));
+
+  /* Mark gradients, sampled from brand/brand.jpeg and brand/brand-dark.jpeg.
+     Dark values are lifted slightly so the mark separates from a near-black page. */
+  --mk-l0: light-dark(#4a4a4a, #808080);
+  --mk-l1: light-dark(#1c1c1c, #2c2c2c);
+  --mk-l2: light-dark(#141414, #202020);
+  --mk-l3: light-dark(#3b3b3b, #4c4c4c);
+  --mk-r0: light-dark(#262626, #3e3e3e);
+  --mk-r1: light-dark(#383838, #707070);
+  --mk-r2: light-dark(#3c3c3c, #787878);
+  --mk-r3: light-dark(#232323, #363636);
+  --mk-r4: light-dark(#101010, #181818);
+  --sheen: light-dark(rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.16));
+}
+
+:root[data-theme='light'] { color-scheme: light; }
+:root[data-theme='dark'] { color-scheme: dark; }
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Drafting grid behind everything, fading towards the edges. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(ellipse 85% 75% at 60% 40%, #000 25%, transparent 100%);
+  mask-image: radial-gradient(ellipse 85% 75% at 60% 40%, #000 25%, transparent 100%);
+}
+
+svg { display: block; }
+a { color: inherit; }
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: -100%;
+  z-index: 20;
+  padding: 0.5rem 0.9rem;
+  background: var(--ink);
+  color: var(--bg);
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-decoration: none;
+}
+.skip-link:focus { top: 1rem; }
+
+/* ---- Mark gradient stops (shared by every instance of the mark) ---- */
+.mk-l0 { stop-color: var(--mk-l0); }
+.mk-l1 { stop-color: var(--mk-l1); }
+.mk-l2 { stop-color: var(--mk-l2); }
+.mk-l3 { stop-color: var(--mk-l3); }
+.mk-r0 { stop-color: var(--mk-r0); }
+.mk-r1 { stop-color: var(--mk-r1); }
+.mk-r2 { stop-color: var(--mk-r2); }
+.mk-r3 { stop-color: var(--mk-r3); }
+.mk-r4 { stop-color: var(--mk-r4); }
+.mk-sheen { stop-color: var(--sheen); }
+
+/* ---- Page frame ---- */
+.page {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem var(--gutter);
+}
+
+.brand {
+  display: inline-flex;
+  color: var(--ink);
+  text-decoration: none;
+}
+.brand-lockup {
+  height: 30px;
+  width: auto;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.95rem 0.5rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.status-dot {
+  position: relative;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink);
+  flex: none;
+}
+.status-dot::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1px solid var(--ink);
+  opacity: 0;
+}
+
+/* ---- Hero ---- */
+.hero {
+  flex: 1;
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vh, 4rem) var(--gutter) clamp(2.5rem, 7vh, 5rem);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+}
+
+.eyebrow {
+  margin: 0 0 1.4rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.headline {
+  margin: 0 0 1.5rem;
+  font-weight: 300;
+  font-size: clamp(2.6rem, 1.4rem + 4.6vw, 5.1rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 0 0 2.25rem;
+  max-width: 32rem;
+  font-size: 1.125rem;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+.facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 0;
+  margin: 0 0 2.25rem;
+  padding: 0;
+}
+.fact {
+  padding-right: 1.75rem;
+  margin-right: 1.75rem;
+  border-right: 1px solid var(--line-soft);
+}
+.fact:last-child {
+  border-right: 0;
+  margin-right: 0;
+  padding-right: 0;
+}
+.fact dt {
+  margin: 0 0 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.fact dd {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.button:hover {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+.hero-visual {
+  margin: 0;
+  justify-self: center;
+  width: 100%;
+  max-width: 640px;
+}
+.fig-caption {
+  margin-top: 0.9rem;
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  text-align: right;
+}
+
+/* ---- Footer ---- */
+.site-footer { margin-top: auto; }
+.tape {
+  height: 5px;
+  background: repeating-linear-gradient(123deg, var(--ink) 0 9px, transparent 9px 18px);
+  opacity: 0.1;
+}
+.footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding: 1.75rem var(--gutter) 2rem;
+  border-top: 1px solid var(--line-soft);
+}
+.footer-lockup {
+  height: 42px;
+  width: auto;
+  color: var(--ink);
+}
+.footer-meta {
+  margin: 0;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--ink-3);
+  text-align: right;
+}
+
+/* ---- Motion (only when the visitor allows it) ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .status-dot::after { animation: ping 2.6s ease-out infinite; }
+  .hero-copy > * {
+    animation: rise 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .hero-copy > :nth-child(2) { animation-delay: 0.08s; }
+  .hero-copy > :nth-child(3) { animation-delay: 0.16s; }
+  .hero-copy > :nth-child(4) { animation-delay: 0.24s; }
+  .hero-copy > :nth-child(5) { animation-delay: 0.32s; }
+  .button { transition: background-color 0.25s ease, color 0.25s ease; }
+}
+@keyframes ping {
+  0% { transform: scale(0.4); opacity: 0.9; }
+  70%, 100% { transform: scale(1.5); opacity: 0; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 880px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+    align-content: center;
+  }
+  .hero-visual {
+    order: -1;
+    max-width: 420px;
+  }
+  .footer-meta { text-align: left; }
+}
+@media (max-width: 560px) {
+  .status-label { display: none; }
+  .status-pill { padding: 0.65rem; }
+  .brand-lockup { height: 26px; }
+  .fact {
+    padding-right: 1.25rem;
+    margin-right: 1.25rem;
+  }
+}

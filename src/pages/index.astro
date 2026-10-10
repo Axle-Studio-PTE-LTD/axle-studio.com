@@ -1,16 +1,67 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import Lockup from '../components/Lockup.astro';
+import Blueprint from '../components/Blueprint.astro';
+import ThemeToggle from '../components/ThemeToggle.astro';
+import { site } from '../site';
+import { home } from '../lib/paths';
+
+const title = `${site.name} — Website under construction`;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title={title}>
+  <div class="page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <a class="brand" href={home} aria-label={`${site.name} home`}>
+        <Lockup variant="compact" id="hdr" class="brand-lockup" />
+      </a>
+      <div class="header-actions">
+        <span class="status-pill">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-label">Under construction</span>
+        </span>
+        <ThemeToggle />
+      </div>
+    </header>
+
+    <main id="main" class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Website under construction</p>
+        <h1 class="headline">Something new is taking&nbsp;shape.</h1>
+        <p class="lede">
+          {site.legalName} is building its new home on the web. The full site is on its way. Please check back soon.
+        </p>
+        <dl class="facts">
+          <div class="fact"><dt>Status</dt><dd>In progress</dd></div>
+          <div class="fact"><dt>Launch</dt><dd>Coming soon</dd></div>
+          <div class="fact"><dt>Based in</dt><dd>{site.location}</dd></div>
+        </dl>
+        {
+          site.email && (
+            <a class="button" href={`mailto:${site.email}`}>
+              Get in touch<span aria-hidden="true">→</span>
+            </a>
+          )
+        }
+      </div>
+
+      <figure class="hero-visual">
+        <Blueprint />
+        <figcaption class="fig-caption">Fig. 01 · The Axle mark, under construction</figcaption>
+      </figure>
+    </main>
+
+    <footer class="site-footer">
+      <div class="tape" aria-hidden="true"></div>
+      <div class="footer-inner">
+        <Lockup variant="full" id="ftr" class="footer-lockup" title={site.legalName} />
+        <p class="footer-meta">
+          © {site.year} {site.legalName}. All rights reserved.<br />
+          {site.location}
+        </p>
+      </div>
+    </footer>
+  </div>
+</Layout>

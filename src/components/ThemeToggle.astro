@@ -1,0 +1,79 @@
+---
+/**
+ * Light / dark switch. The page follows the system by default; a click pins
+ * a theme via `data-theme` on <html> and remembers it in localStorage.
+ * Both icons are always in the DOM; light-dark() decides which one is visible.
+ */
+---
+
+<button class="theme-toggle" type="button" data-theme-toggle aria-label="Switch theme">
+  <svg class="icon icon-moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.5 8.5 0 1 0 10.8 10.8Z"></path>
+  </svg>
+  <svg class="icon icon-sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="4"></circle>
+    <path d="M12 2.5v2.2M12 19.3v2.2M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+  }
+  .theme-toggle:hover {
+    border-color: var(--ink);
+  }
+  .icon {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 18px;
+    height: 18px;
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon-moon {
+    stroke: light-dark(currentColor, transparent);
+  }
+  .icon-sun {
+    stroke: light-dark(transparent, currentColor);
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]');
+
+  const effective = () => root.dataset.theme ?? (media.matches ? 'dark' : 'light');
+  const next = () => (effective() === 'dark' ? 'light' : 'dark');
+  const relabel = () => {
+    for (const button of buttons) button.setAttribute('aria-label', `Switch to ${next()} theme`);
+  };
+
+  for (const button of buttons) {
+    button.addEventListener('click', () => {
+      const theme = next();
+      root.dataset.theme = theme;
+      try {
+        localStorage.setItem('theme', theme);
+      } catch {
+        /* storage unavailable: the choice simply lasts for this page view */
+      }
+      relabel();
+    });
+  }
+  media.addEventListener('change', relabel);
+  relabel();
+</script>
