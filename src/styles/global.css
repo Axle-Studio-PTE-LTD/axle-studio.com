@@ -2,6 +2,11 @@
    Monochrome system drawn from the brand lockup. Colours use light-dark();
    the theme toggle only flips `color-scheme`, so one token set serves both. */
 
+/* Tailwind v4. Its output sits in cascade layers, while the rules below are
+   unlayered, so they win over Tailwind's base reset and also over a utility
+   class that sets the same property on the same element. */
+@import 'tailwindcss';
+
 :root {
   color-scheme: light dark;
 

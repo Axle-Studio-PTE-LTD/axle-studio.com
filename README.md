@@ -15,7 +15,8 @@ Single-page "under construction" site for Axle Studios Pte Ltd, built with [Astr
 
 - `src/site.ts` — company details shown on the page (name, location, contact email). The contact button only appears once `email` is set.
 - `src/pages/index.astro` — the page content and copy.
-- `src/styles/global.css` — design tokens (light and dark via `light-dark()`), layout and typography.
+- `src/styles/global.css` — imports Tailwind CSS, then the design tokens (light and dark via `light-dark()`), layout and typography. These hand-written rules are unlayered, so they take precedence over Tailwind's reset and utilities.
+- `src/pages/robots.txt.ts` — generates `robots.txt`, pointing crawlers at the sitemap that `@astrojs/sitemap` writes to `sitemap-index.xml` on every build.
 - `src/lib/brand.ts` — the brand geometry: logo mark paths, "AXLE" letterforms and lockup layout, all traced from `brand/brand.jpeg`.
 - `src/components/` — `Lockup` (mark + wordmark), `Mark`, `MarkPaths` (shared gradients), `Blueprint` (hero illustration) and `ThemeToggle`.
 - `public/` — favicons, Apple touch icon and the social preview image (`og.png`), all generated from the same mark geometry.
