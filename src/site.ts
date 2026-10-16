@@ -26,6 +26,8 @@ export const founders = [
     name: 'David',
     role: 'Founder',
     focus: 'Business direction, finance, growth and sales.',
+    /** Optional personal site, shown as a link on the card. */
+    url: 'https://tandavid.com',
   },
   {
     name: 'Long Ju',
