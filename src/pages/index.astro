@@ -3,10 +3,27 @@ import Layout from '../layouts/Layout.astro';
 import Lockup from '../components/Lockup.astro';
 import Blueprint from '../components/Blueprint.astro';
 import ThemeToggle from '../components/ThemeToggle.astro';
-import { site } from '../site';
+import Timeline from '../components/Timeline.astro';
+import { site, abang, founders } from '../site';
 import { home } from '../lib/paths';
 
-const title = `${site.name} — Website under construction`;
+const title = `${site.name} | Software studio in Singapore`;
+
+const nav = [
+  { href: '#abang', label: 'Abang SG' },
+  { href: '#mission', label: 'Mission' },
+  { href: '#timeline', label: 'Timeline' },
+  { href: '#founders', label: 'Founders' },
+  { href: '#contact', label: 'Contact' },
+];
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 ---
 
 <Layout title={title}>
@@ -17,40 +34,151 @@ const title = `${site.name} — Website under construction`;
       <a class="brand" href={home} aria-label={`${site.name} home`}>
         <Lockup variant="compact" id="hdr" class="brand-lockup" />
       </a>
+      <nav class="site-nav" aria-label="Sections">
+        {nav.map((n) => <a href={n.href}>{n.label}</a>)}
+      </nav>
       <div class="header-actions">
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span class="status-label">Under construction</span>
-        </span>
         <ThemeToggle />
       </div>
     </header>
 
-    <main id="main" class="hero">
-      <div class="hero-copy">
-        <p class="eyebrow">Website under construction</p>
-        <h1 class="headline">Something new is taking&nbsp;shape.</h1>
-        <p class="lede">
-          {site.legalName} is building its new home on the web. The full site is on its way. Please check back soon.
-        </p>
-        <dl class="facts">
-          <div class="fact"><dt>Status</dt><dd>In progress</dd></div>
-          <div class="fact"><dt>Launch</dt><dd>Coming soon</dd></div>
-          <div class="fact"><dt>Based in</dt><dd>{site.location}</dd></div>
-        </dl>
-        {
-          site.email && (
-            <a class="button" href={`mailto:${site.email}`}>
-              Get in touch<span aria-hidden="true">→</span>
-            </a>
-          )
-        }
-      </div>
+    <main id="main">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Software studio · {site.location}</p>
+          <h1 class="headline"><span class="hl-sheen">Lazy</span><br />by <span class="hl-sheen hl-sheen-2">design</span>.</h1>
+          <p class="lede">
+            The laziest way to do something is to do it right the first time. {site.legalName} builds software that's simple to
+            use, sharp to look at, and never makes you do the same thing twice. Our first product is <a href={abang.url} rel="noopener">{abang.name}</a>.
+          </p>
+          <dl class="facts">
+            <div class="fact"><dt>Founded</dt><dd>2026</dd></div>
+            <div class="fact"><dt>First product</dt><dd>{abang.name}</dd></div>
+            <div class="fact"><dt>Based in</dt><dd>{site.location}</dd></div>
+          </dl>
+          <a class="button" href="#abang">See what we're building<span aria-hidden="true">→</span></a>
+        </div>
 
-      <figure class="hero-visual">
-        <Blueprint />
-        <figcaption class="fig-caption">Fig. 01 · The Axle mark, under construction</figcaption>
-      </figure>
+        <figure class="hero-visual">
+          <Blueprint />
+          <figcaption class="fig-caption">Fig. 01 · The Axle mark</figcaption>
+        </figure>
+      </section>
+
+      <section id="abang" class="section">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">01 · Our product</p>
+          <h2 class="section-title"><a class="title-link sheen-once" href={abang.url} rel="noopener">{abang.name}</a></h2>
+          <p class="section-lede">
+            Compare repair and home service companies across Singapore in one place. No more searching company by company to
+            work out who's cheapest and who's best qualified for your job.
+          </p>
+        </div>
+        <ul class="features">
+          <li class="feature" data-reveal style="--d: 0.00s">
+            <span class="feature-num">A</span>
+            <h3>We do the comparing</h3>
+            <p>Abang puts repair companies side by side, so you can see who's cheapest and who's best qualified for the job at a glance.</p>
+          </li>
+          <li class="feature" data-reveal style="--d: 0.12s">
+            <span class="feature-num">B</span>
+            <h3>Every repair, one place</h3>
+            <p>Plumbing, electrical, aircon, handyman and appliance repair in one search. Filter by what you need and compare in a few taps.</p>
+          </li>
+          <li class="feature" data-reveal style="--d: 0.24s">
+            <span class="feature-num">C</span>
+            <h3>Built for young adults</h3>
+            <p>We're the young adults now taking charge of repairs at home. Abang makes it as easy as the apps we already use every day.</p>
+          </li>
+        </ul>
+        <div class="section-actions" data-reveal>
+          {
+            abang.live ? (
+              <a class="button" href={abang.url} rel="noopener">
+                Visit abang.sg<span aria-hidden="true">→</span>
+              </a>
+            ) : (
+              <span class="status-pill">
+                <span class="status-dot" aria-hidden="true"></span>
+                <span>abang.sg · coming soon</span>
+              </span>
+            )
+          }
+        </div>
+      </section>
+
+      <section id="mission" class="section section-mission">
+        <p class="eyebrow">02 · Our mission</p>
+        <p class="mission-statement sheen-once" data-reveal>Compare. Choose. Done.</p>
+        <div class="mission-body" data-reveal style="--d: 0.15s">
+          <p>No more calling around and comparing quotes yourself. We do the legwork for you.</p>
+          <p>So sorting out a home repair feels as easy as everything else on your phone.</p>
+        </div>
+        <aside class="why-axle" data-reveal style="--d: 0.25s">
+          <p class="why-axle-label">Why Axle</p>
+          <p class="why-axle-text">
+            An axle is the part you never notice, yet it's what makes the whole wheel turn. That's the kind of software we want to build.
+          </p>
+        </aside>
+      </section>
+
+      <section id="timeline" class="section">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">03 · Timeline</p>
+          <h2 class="section-title"><span class="sheen-once">How we got here</span></h2>
+          <p class="section-lede">The story so far, built as we go.</p>
+        </div>
+        <Timeline />
+      </section>
+
+      <section id="founders" class="section">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">04 · Founders</p>
+          <h2 class="section-title"><span class="sheen-once">The people behind it</span></h2>
+        </div>
+        <ul class="founders">
+          {
+            founders.map((f, i) => (
+              <li class="founder" data-reveal style={`--d: ${i * 0.1}s`}>
+                <span class="founder-avatar" aria-hidden="true">{initials(f.name)}</span>
+                <div>
+                  <h3 class="founder-name">{f.name}</h3>
+                  <p class="founder-role">{f.role}</p>
+                  <p class="founder-focus">{f.focus}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
+
+      <section id="contact" class="section section-contact">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">05 · Contact</p>
+          <h2 class="section-title"><span class="sheen-once">Get in touch</span></h2>
+          <p class="section-lede">
+            Questions, partnerships or press. If you run a repair business and want to be on {abang.name}, we'd especially like
+            to hear from you.
+          </p>
+        </div>
+        <div class="contact-actions" data-reveal style="--d: 0.1s">
+          {
+            site.email && (
+              <a class="button" href={`mailto:${site.email}`}>
+                {site.email}<span aria-hidden="true">→</span>
+              </a>
+            )
+          }
+          {
+            site.whatsapp && (
+              <a class="button button-ghost" href={`https://wa.me/${site.whatsapp}`} rel="noopener">
+                WhatsApp<span aria-hidden="true">→</span>
+              </a>
+            )
+          }
+          {!site.email && !site.whatsapp && <p class="contact-pending">Contact details coming soon.</p>}
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
@@ -59,9 +187,29 @@ const title = `${site.name} — Website under construction`;
         <Lockup variant="full" id="ftr" class="footer-lockup" title={site.legalName} />
         <p class="footer-meta">
           © {site.year} {site.legalName}. All rights reserved.<br />
-          {site.location}
+          {site.uen && <>UEN {site.uen} · </>}{site.location}
         </p>
       </div>
     </footer>
   </div>
 </Layout>
+
+<script>
+  // Scroll reveals. Content is only hidden once this runs, so the page is complete without JS.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce && 'IntersectionObserver' in window) {
+    document.documentElement.classList.add('reveal-ready');
+    const io = new IntersectionObserver(
+      (records) => {
+        for (const r of records) {
+          if (r.isIntersecting) {
+            r.target.classList.add('is-in');
+            io.unobserve(r.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -10% 0px' },
+    );
+    document.querySelectorAll('[data-reveal], .section, .features').forEach((el) => io.observe(el));
+  }
+</script>

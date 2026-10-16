@@ -25,7 +25,7 @@ Single-page "under construction" site for Axle Studios Pte Ltd, built with [Astr
 
 Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site with Bun and publishes `dist/` to GitHub Pages (Settings → Pages → Source must be "GitHub Actions"). The workflow can also be run by hand from the Actions tab.
 
-The site is served on the custom domain `axle-studio.com`: `public/CNAME` holds the domain and `astro.config.mjs` sets `site` to `https://axle-studio.com`, which drives the canonical and social-image URLs. Links to files in `public/` go through `withBase()` from `src/lib/paths.ts`, so if the site ever has to live under a sub-path, setting `base` in the config is the only change needed.
+The site is served on the custom domain `axle-studios.com`: `public/CNAME` holds the domain and `astro.config.mjs` sets `site` to `https://axle-studios.com`, which drives the canonical and social-image URLs. Links to files in `public/` go through `withBase()` from `src/lib/paths.ts`, so if the site ever has to live under a sub-path, setting `base` in the config is the only change needed.
 
 ## Notes
 
