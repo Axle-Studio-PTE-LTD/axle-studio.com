@@ -1,0 +1,163 @@
+---
+/**
+ * Company timeline, built from src/content/timeline/*.md.
+ *
+ * Desktop: centre line, events alternate left and right, each one starting
+ * where the previous one ends. A single date label rides the line at the
+ * vertical centre of the screen and shows the date of the event crossing it.
+ *
+ * Mobile: line on the left, each event branches off it with its own fixed
+ * date label sitting on the branch line.
+ */
+import { getCollection, render } from 'astro:content';
+import { Image } from 'astro:assets';
+
+const entries = (await getCollection('timeline', ({ data }) => !data.draft)).sort(
+  (a, b) => a.data.date.getTime() - b.data.date.getTime() || a.data.order - b.data.order,
+);
+
+const fmt = new Intl.DateTimeFormat('en-SG', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Singapore' });
+
+const items = await Promise.all(
+  entries.map(async (entry) => {
+    const { Content } = await render(entry);
+    const { date, dateLabel } = entry.data;
+    let line1: string;
+    let line2: string;
+    if (dateLabel) {
+      const words = dateLabel.split(' ');
+      line1 = words[0];
+      line2 = words.slice(1).join(' ');
+    } else {
+      const parts = fmt.formatToParts(date);
+      const get = (t: string) => parts.find((p) => p.type === t)?.value ?? '';
+      line1 = `${get('day')} ${get('month')}`;
+      line2 = get('year');
+    }
+    return { entry, Content, line1, line2, full: [line1, line2].filter(Boolean).join(' ') };
+  }),
+);
+---
+
+{items.length > 0 && (
+<div class="timeline" data-timeline>
+  <span class="tl-progress" aria-hidden="true"></span>
+  <div class="tl-rail" aria-hidden="true">
+    <div class="tl-hub-wrap">
+      <span class="tl-label">
+        <svg class="tl-hub" viewBox="0 0 16 16" aria-hidden="true">
+          <circle cx="8" cy="8" r="6.5" />
+          <line x1="9.70" y1="8.00" x2="14.50" y2="8.00" /><line x1="8.85" y1="9.47" x2="11.25" y2="13.63" /><line x1="7.15" y1="9.47" x2="4.75" y2="13.63" /><line x1="6.30" y1="8.00" x2="1.50" y2="8.00" /><line x1="7.15" y1="6.53" x2="4.75" y2="2.37" /><line x1="8.85" y1="6.53" x2="11.25" y2="2.37" />
+          <circle class="tl-hub-axle" cx="8" cy="8" r="1.7" />
+        </svg>
+        <span data-tl-label>{items[0].full}</span>
+      </span>
+    </div>
+  </div>
+
+  <ol class="tl-list">
+    {
+      items.map(({ entry, Content, line1, line2, full }) => (
+        <li class:list={['tl-item', entry.data.upcoming && 'is-upcoming']} data-tl-item data-date={full}>
+          <time class="tl-date" datetime={entry.data.date.toISOString().slice(0, 10)}>
+            <span>{line1}</span> <span>{line2}</span>
+          </time>
+          <article class="tl-card">
+            <p class="tl-tag">{entry.data.upcoming ? `${entry.data.tag} · Upcoming` : entry.data.tag}</p>
+            <h3 class="tl-title">{entry.data.title}</h3>
+            <div class="tl-body">
+              <Content />
+            </div>
+            {entry.data.image && (
+              <a class="tl-shot" href={entry.data.image.light.src} target="_blank" rel="noopener" aria-label={`${entry.data.image.alt} (opens full size)`}>
+                <Image
+                  class:list={['tl-img', entry.data.image.dark && 'tl-img-light']}
+                  src={entry.data.image.light}
+                  alt={entry.data.image.alt}
+                  widths={[480, 960]}
+                  sizes="(max-width: 760px) 80vw, 460px"
+                />
+                {entry.data.image.dark && (
+                  <Image
+                    class="tl-img tl-img-dark"
+                    src={entry.data.image.dark}
+                    alt=""
+                    widths={[480, 960]}
+                    sizes="(max-width: 760px) 80vw, 460px"
+                  />
+                )}
+              </a>
+            )}
+          </article>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+)}
+
+<script>
+  const tl = document.querySelector<HTMLElement>('[data-timeline]');
+  const label = tl?.querySelector<HTMLElement>('[data-tl-label]');
+  const items = tl ? [...tl.querySelectorAll<HTMLElement>('[data-tl-item]')] : [];
+
+  if (tl && label && items.length) {
+    let current: HTMLElement | null = null;
+    let queued = false;
+
+    // The active event is the last one whose top has passed the screen's centre.
+    const update = () => {
+      queued = false;
+      const mid = window.innerHeight / 2;
+      // Ink fills the line down to the centre of the screen.
+      const top = tl.getBoundingClientRect().top;
+      tl.style.setProperty('--tl-p', `${Math.min(Math.max(mid - top, 0), tl.offsetHeight)}px`);
+      let active = items[0];
+      for (const item of items) {
+        if (item.getBoundingClientRect().top <= mid) active = item;
+      }
+      if (active === current) return;
+      current?.classList.remove('is-active');
+      active.classList.add('is-active');
+      current = active;
+      label.textContent = active.dataset.date ?? '';
+      label.parentElement?.classList.toggle('is-upcoming', active.classList.contains('is-upcoming'));
+      label.classList.remove('is-swapping');
+      void label.offsetWidth; // restart the swap animation
+      label.classList.add('is-swapping');
+    };
+
+    const queue = () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(update);
+      }
+    };
+    // The hub turns like a wheel on its axle as you scroll through the story.
+    const hub = tl.querySelector<SVGElement>('.tl-hub');
+    const turn = () => hub?.style.setProperty('--rot', `${window.scrollY * 0.6}deg`);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      window.addEventListener('scroll', turn, { passive: true });
+      turn();
+    }
+
+    window.addEventListener('scroll', queue, { passive: true });
+    window.addEventListener('resize', queue);
+    update();
+
+    // Fade events in as they arrive (CSS only animates when motion is allowed).
+    tl.dataset.tlReveal = '';
+    const io = new IntersectionObserver(
+      (records) => {
+        for (const r of records) {
+          if (r.isIntersecting) {
+            r.target.classList.add('is-in');
+            io.unobserve(r.target);
+          }
+        }
+      },
+      { rootMargin: '0px 0px -12% 0px' },
+    );
+    items.forEach((item) => io.observe(item));
+  }
+</script>
