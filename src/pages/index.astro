@@ -145,6 +145,12 @@ const initials = (name: string) =>
                   <h3 class="founder-name">{f.name}</h3>
                   <p class="founder-role">{f.role}</p>
                   <p class="founder-focus">{f.focus}</p>
+                  {'url' in f && f.url && (
+                    <a class="founder-link" href={f.url} target="_blank" rel="noopener">
+                      {f.url.replace(/^https?:\/\//, '')}
+                      <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
                 </div>
               </li>
             ))
